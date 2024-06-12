@@ -2,6 +2,7 @@
 
 #include "game.h"
 
+//初始化面板
 void InitBoard(char board[ROWS][COLS], int rows, int cols, char set)
 {
 	int i = 0;
@@ -15,6 +16,7 @@ void InitBoard(char board[ROWS][COLS], int rows, int cols, char set)
 	}
 }
 
+//显示面板
 void DisplayBoard(char board[ROWS][COLS], int row, int col)	//正常运行
 {
 	int i = 0;
@@ -59,6 +61,7 @@ void DisplayBoard(char board[ROWS][COLS], int row, int col)	//正常运行
 //	}
 //}
 
+//设置雷图
 void SetMine(char board[ROWS][COLS], int row, int col)
 {
 	int count = EASY_COUNT;//雷数量
@@ -74,6 +77,7 @@ void SetMine(char board[ROWS][COLS], int row, int col)
 	}
 }
 
+//找出所排查的坐标的3x3区域有多少雷
 int get_mine_count(char mine[ROWS][COLS], int x, int y)
 {
 	return (mine[x-1][y] +
@@ -86,6 +90,119 @@ int get_mine_count(char mine[ROWS][COLS], int x, int y)
 		mine[x + 1][y + 1] - 8 * '0');
 }
 
+////将所排查为空的这一点周围3x3区域显示出来，并返回其展开的数量
+//int Show_Together(char show[ROWS][COLS], char mine[ROWS][COLS], int x, int y)
+//{
+//	if (x >= 1 && x <= ROW && y >= 1 && y <= COL)//判断点位是否合法
+//	{
+//		//排查数量
+//		int win = 0,
+//			win_up = 0,
+//			win_down = 0,
+//			win_left = 0,
+//			win_right = 0,
+//			win_leftup = 0,
+//			win_leftdown = 0,
+//			win_rightup = 0,
+//			win_rightdown = 0;
+//
+//		//周围八格的雷数量
+//		int count;
+//		//上
+//		if ((count = get_mine_count(mine, x - 1, y)) == 0)
+//		{
+//			show[x-1][y] = '0';
+//			win_up = Show_Together(show, mine, x - 1, y) + 1;
+//		}
+//		else
+//		{
+//			show[x-1][y] = count + '0';
+//			win_up = 1;
+//		}
+//		//下
+//		if ((count = get_mine_count(mine, x + 1, y)) == 0)
+//		{
+//			show[x+1][y] = '0';
+//			win_down = Show_Together(show, mine, x + 1, y) + 1;
+//		}
+//		else
+//		{
+//			show[x+1][y] = count + '0';
+//			win_down = 1;
+//		}
+//		//左
+//		if ((count = get_mine_count(mine, x, y-1)) == 0)
+//		{
+//			show[x][y-1] = '0';
+//			win_left = Show_Together(show, mine, x , y-1) + 1;
+//		}
+//		else
+//		{
+//			show[x][y-1] = count + '0';
+//			win_left = 1;
+//		}
+//		//右
+//		if ((count = get_mine_count(mine, x, y+1)) == 0)
+//		{
+//			show[x][y+1] = '0';
+//			win_right = Show_Together(show, mine, x , y+1) + 1;
+//		}
+//		else
+//		{
+//			show[x][y+1] = count + '0';
+//			win_right = 1;
+//		}
+//		//右上
+//		if ((count = get_mine_count(mine, x-1, y+1)) == 0)
+//		{
+//			show[x-1][y+1] = '0';
+//			win_rightup = Show_Together(show, mine, x-1 , y+1) + 1;
+//		}
+//		else
+//		{
+//			show[x-1][y+1] = count + '0';
+//			win_rightup = 1;
+//		}
+//		//右下
+//		if ((count = get_mine_count(mine, x+1, y+1)) == 0)
+//		{
+//			show[x+1][y+1] = '0';
+//			win_rightdown = Show_Together(show, mine, x+1 , y+1) + 1;
+//		}
+//		else
+//		{
+//			show[x+1][y+1] = count + '0';
+//			win_rightdown = 1;
+//		}
+//		//左下
+//		if ((count = get_mine_count(mine, x+1, y-1)) == 0)
+//		{
+//			show[x+1][y-1] = '0';
+//			win_leftdown = Show_Together(show, mine, x+1 , y-1) + 1;
+//		}
+//		else
+//		{
+//			show[x+1][y-1] = count + '0';
+//			win_leftdown = 1;
+//		}
+//		//左上
+//		if ((count = get_mine_count(mine, x-1, y-1)) == 0)
+//		{
+//			show[x-1][y-1] = '0';
+//			win_leftup = Show_Together(show, mine, x-1 , y-1) + 1;
+//		}
+//		else
+//		{
+//			show[x-1][y-1] = count + '0';
+//			win_leftup = 1;
+//		}
+//		return (win_up + win_down + win_left + win_right + win_leftup + win_leftdown + win_rightup + win_rightdown);
+//	}
+//	else
+//		return 0;
+//}
+
+//排雷
 void FindMine(char mine[ROWS][COLS], char show[ROWS][COLS], int row, int col)
 {
 	int x = 0;
@@ -107,11 +224,24 @@ void FindMine(char mine[ROWS][COLS], char show[ROWS][COLS], int row, int col)
 			}
 			else//不是雷
 			{
-				//判断该点位周围有几个雷
+				//该点位周围有几个雷
 				int count = get_mine_count(mine, x, y);
-				show[x][y] = count + '0';
-				DisplayBoard(show, ROW, COL);
-				win++;
+				//周围有雷则只开一格
+				//if(!count == 0)
+				//{
+					//在该点显示雷的数量
+					show[x][y] = count + '0';
+					//显示排查面板
+					DisplayBoard(show, ROW, COL);
+					win++;
+				//}
+				//否则连开
+				//else
+				//{
+				//将所排查的这一格周围所有无雷格的3x3区域显示出来,并返回连续排查的数量
+				//win += Show_Together(show, mine, x, y);
+				//DisplayBoard(show, ROW, COL);
+				//}
 			}
 		}
 		else

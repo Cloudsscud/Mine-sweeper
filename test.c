@@ -30,7 +30,7 @@ void game()
 
 	//²¼ÖÃÀ×
 	SetMine(mine, ROW, COL);
-	//DisplayBoard(mine, ROW, COL);
+	DisplayBoard(mine, ROW, COL);
 
 	//É¨À×
 	FindMine(mine, show, ROW, COL);
